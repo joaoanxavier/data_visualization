@@ -1,0 +1,84 @@
+---
+title: "Aula 2 - Prática dos Slides"
+author: "João Xavier"
+date: "02/03/2021"
+output: github_document
+---
+
+- Pacotes usados
+
+```{r Pacotes, echo=TRUE, results='hide', error=FALSE, message=FALSE}
+library(tidyverse)
+library(ggplot2)
+```
+
+
+- Gerando a base de dados
+    - Além do que o autor fez adicionei uma coluna com as temperaturas em graus 
+    Celsius
+
+```{r Carregando base de dados, echo=TRUE, results='hide', error=FALSE, message=FALSE}
+link <- "https://wilkelab.org/SDS375/datasets/tempnormals.csv"
+temperatures <- read_csv(link) %>% 
+    mutate(
+        location = factor(
+            location, levels = c("Death Valley", "Chicago", "Houston", "San Diego")
+        ),
+        temperature_celsius = (temperature - 32) * 5/9 
+    )
+```
+
+
+1. **Gráfico de linha simples**
+
+```{r Gráfico 1}
+temperatures %>% 
+    ggplot(
+        aes(day_of_year, temperature_celsius,
+            color = location)
+        ) +
+    geom_line()
+```
+
+
+2. **Gráfico de cor**
+
+```{r Gráfico 2}
+temperatures %>% 
+    ggplot(
+        aes(day_of_year, location,
+            color = temperature)
+        ) +
+    geom_point(size = 5)
+```
+
+
+3. **Boxplot**
+
+```{r Gráfico 3}
+temperatures %>% 
+    ggplot(
+        aes(month, temperature,
+            color = location)
+        ) +
+    geom_boxplot()
+```
+
+
+4. **Violim**
+
+- Usando facet_wrap para criar 4 gŕaficos separados
+    - Não se esquecer usar vars() na função facet_wrap
+
+```{r Gráfico 4}
+temperatures %>% 
+    ggplot(aes(month, temperature,
+               fill = location)) +
+    geom_violin() +
+    facet_wrap(vars(location))
+```
+
+
+-  **Comentário geral**: notar a diferença entre os argumento fill e color em aes()
+    - Fill colore todo o interior do geom, enquanto color apenas a parte externa
+    - Alguns tipos de geom suportam ambos os argumentos
